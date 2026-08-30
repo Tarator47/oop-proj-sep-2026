@@ -48,7 +48,7 @@ namespace {
         delete[] copy;
         return result;
     }
-} // namespace
+}
 
 bool Cell::isEmpty() const {
     return getType() == Type::Empty;
