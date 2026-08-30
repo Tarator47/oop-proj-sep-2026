@@ -51,6 +51,9 @@ int main() {
             std::cout << "Closed\n";
         } else if (strcmp(command, "exit") == 0) {
             break;
+        } else if (strcmp(command, "help") == 0) {
+            std::cout << "Commands: open, print, edit <r> <c> <value>, "
+                      << "save, saveas <file>, close, exit, help\n";
         } else {
             std::cout << "Unknown command\n";
         }
