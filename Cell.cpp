@@ -1,0 +1,233 @@
+#include "Cell.h"
+
+#include "TypeDetectors.h"
+
+#include <ctype.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+
+namespace {
+
+char* cloneCString(const char* source) {
+    if (source == nullptr) {
+        return new char[1]{'\0'};
+    }
+
+    size_t length = strlen(source) + 1;
+    char* copy = new char[length];
+    strcpy(copy, source);
+    return copy;
+}
+
+void trimInPlace(char* text) {
+    if (text == nullptr) {
+        return;
+    }
+
+    size_t start = 0;
+    while (text[start] != '\0' && isspace((unsigned char)text[start])) {
+        ++start;
+    }
+
+    if (start > 0) {
+        size_t length = strlen(text + start) + 1;
+        memmove(text, text + start, length);
+    }
+
+    size_t end = strlen(text);
+    while (end > 0 && isspace((unsigned char)text[end - 1])) {
+        text[--end] = '\0';
+    }
+}
+
+char* trimClone(const char* source) {
+    char* copy = cloneCString(source == nullptr ? "" : source);
+    trimInPlace(copy);
+    char* result = cloneCString(copy);
+    delete[] copy;
+    return result;
+}
+
+} // namespace
+
+bool Cell::isEmpty() const {
+    return getType() == Type::Empty;
+}
+
+bool Cell::isFormulaCell() const {
+    return false;
+}
+
+long long Cell::asInteger() const {
+    return 0;
+}
+
+double Cell::asDouble() const {
+    return 0.0;
+}
+
+Cell* Cell::createFromText(const char* rawText) {
+    char* trimmed = trimClone(rawText);
+
+    if (trimmed[0] == '\0') {
+        delete[] trimmed;
+        return new EmptyCell();
+    }
+
+    Type type = detectCellType(trimmed);
+    Cell* result = nullptr;
+
+    switch (type) {
+        case Type::Empty:
+            result = new EmptyCell();
+            break;
+        case Type::Integer:
+            result = new IntCell(atoll(trimmed));
+            break;
+        case Type::Double:
+            result = new DoubleCell(atof(trimmed));
+            break;
+        case Type::String:
+            result = new StringCell(trimmed);
+            break;
+        case Type::Date:
+            result = new DateCell(trimmed);
+            break;
+        case Type::Formula:
+            result = new FormulaCell(trimmed);
+            break;
+        default:
+            result = new EmptyCell();
+            break;
+    }
+
+    delete[] trimmed;
+    return result;
+}
+
+EmptyCell::EmptyCell() {}
+
+Type EmptyCell::getType() const {
+    return Type::Empty;
+}
+
+void EmptyCell::print(std::ostream& out) const {
+    (void)out;
+}
+
+const char* EmptyCell::text() const {
+    return "";
+}
+
+IntCell::IntCell(long long value)
+    : value(value) {}
+
+Type IntCell::getType() const {
+    return Type::Integer;
+}
+
+void IntCell::print(std::ostream& out) const {
+    out << value;
+}
+
+const char* IntCell::text() const {
+    static char buffer[64];
+    snprintf(buffer, sizeof(buffer), "%lld", value);
+    return buffer;
+}
+
+long long IntCell::asInteger() const {
+    return value;
+}
+
+long long IntCell::getValue() const {
+    return value;
+}
+
+DoubleCell::DoubleCell(double value)
+    : value(value) {}
+
+Type DoubleCell::getType() const {
+    return Type::Double;
+}
+
+void DoubleCell::print(std::ostream& out) const {
+    out << value;
+}
+
+const char* DoubleCell::text() const {
+    static char buffer[64];
+    snprintf(buffer, sizeof(buffer), "%g", value);
+    return buffer;
+}
+
+double DoubleCell::asDouble() const {
+    return value;
+}
+
+double DoubleCell::getValue() const {
+    return value;
+}
+
+StringCell::StringCell(const char* value)
+    : value(cloneCString(value == nullptr ? "" : value)) {}
+
+StringCell::~StringCell() {
+    delete[] value;
+}
+
+Type StringCell::getType() const {
+    return Type::String;
+}
+
+void StringCell::print(std::ostream& out) const {
+    out << value;
+}
+
+const char* StringCell::text() const {
+    return value;
+}
+
+DateCell::DateCell(const char* value)
+    : value(cloneCString(value == nullptr ? "" : value)) {}
+
+DateCell::~DateCell() {
+    delete[] value;
+}
+
+Type DateCell::getType() const {
+    return Type::Date;
+}
+
+void DateCell::print(std::ostream& out) const {
+    out << value;
+}
+
+const char* DateCell::text() const {
+    return value;
+}
+
+FormulaCell::FormulaCell(const char* expression)
+    : expression(cloneCString(expression == nullptr ? "" : expression)) {}
+
+FormulaCell::~FormulaCell() {
+    delete[] expression;
+}
+
+Type FormulaCell::getType() const {
+    return Type::Formula;
+}
+
+bool FormulaCell::isFormulaCell() const {
+    return true;
+}
+
+void FormulaCell::print(std::ostream& out) const {
+    out << expression;
+}
+
+const char* FormulaCell::text() const {
+    return expression;
+}
