@@ -99,6 +99,9 @@ int main() {
     std::cout << table.getRow(1)->getCell(0)->text() << "\n";
     std::cout << table.getCell(5, 10)->text() << "\n";
 
+    table.editCell(1, 1, "777");
+    std::cout << table.getRow(1)->getCell(1)->text() << "\n";
+
     table.saveToFile("table_test.csv", ',');
 
     Table loaded;

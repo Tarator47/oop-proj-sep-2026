@@ -334,6 +334,20 @@ bool Table::setCell(size_t r, size_t c, Cell* cell) {
     return true;
 }
 
+bool Table::editCell(size_t r, size_t c, const char* text) {
+    if (text == nullptr) {
+        return false;
+    }
+
+    Cell* cell = Cell::createFromText(text);
+    bool success = setCell(r, c, cell);
+    if (!success) {
+        delete cell;
+    }
+
+    return success;
+}
+
 void Table::copyFrom(const Table& other) {
     if (this == &other) {
         return;

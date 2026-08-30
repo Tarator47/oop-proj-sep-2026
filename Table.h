@@ -31,6 +31,7 @@ class Table {
     Cell* getCell(size_t r, size_t c);
     const Cell* getCell(size_t r, size_t c) const;
     bool setCell(size_t r, size_t c, Cell* cell);
+    bool editCell(size_t r, size_t c, const char* text);
 
   private:
     void copyFrom(const Table& other);
