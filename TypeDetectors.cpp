@@ -5,118 +5,103 @@
 #include <string.h>
 
 namespace {
-
-bool isWhitespaceChar(char c) {
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
-}
-
-const char* trimLeadingWhitespace(const char* s) {
-    if (s == nullptr) {
-        return "";
+    bool isWhitespaceChar(char c) {
+        return c == ' ' || c == '\t' || c == '\n' || c == '\r';
     }
 
-    while (*s != '\0' && isWhitespaceChar(*s)) {
-        ++s;
-    }
-
-    return s;
-}
-
-const char* trimTrailingWhitespace(const char* s) {
-    if (s == nullptr) {
-        return "";
-    }
-
-    const char* end = s + strlen(s);
-    while (end > s && isWhitespaceChar(end[-1])) {
-        --end;
-    }
-
-    return end;
-}
-
-bool isDigitSequence(const char* start, size_t length) {
-    if (start == nullptr || length == 0) {
-        return false;
-    }
-
-    for (size_t i = 0; i < length; ++i) {
-        if (!((start[i] >= '0' && start[i] <= '9'))) {
-            return false;
+    const char* trimLeadingWhitespace(const char* s) {
+        if (s == nullptr) {
+            return "";
         }
+
+        while (*s != '\0' && isWhitespaceChar(*s)) {
+            ++s;
+        }
+
+        return s;
     }
 
-    return true;
-}
-
-bool isLeapYear(int year) {
-    return (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
-}
-
-bool isValidDate(int day, int month, int year) {
-    if (year < 1 || month < 1 || month > 12 || day < 1) {
-        return false;
-    }
-
-    const int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    int maxDay = daysInMonth[month - 1];
-    if (month == 2 && isLeapYear(year)) {
-        maxDay = 29;
-    }
-
-    return day <= maxDay;
-}
-
-bool isValidDateString(const char* s, bool yearFirst) {
-    if (s == nullptr || *s == '\0') {
-        return false;
-    }
-
-    const char* firstDash = strchr(s, '-');
-    if (firstDash == nullptr || firstDash == s) {
-        return false;
-    }
-
-    const char* secondDash = strchr(firstDash + 1, '-');
-    if (secondDash == nullptr || secondDash == firstDash + 1 || secondDash[1] == '\0') {
-        return false;
-    }
-
-    if (strchr(secondDash + 1, '-') != nullptr) {
-        return false;
-    }
-
-    size_t len1 = (size_t)(firstDash - s);
-    size_t len2 = (size_t)(secondDash - (firstDash + 1));
-    size_t len3 = strlen(secondDash + 1);
-
-    if ((len1 == 2 && len2 == 2 && len3 == 4) || (len1 == 4 && len2 == 2 && len3 == 2)) {
-        char part1[5] = {'\0'};
-        char part2[3] = {'\0'};
-        char part3[5] = {'\0'};
-
-        memcpy(part1, s, len1);
-        memcpy(part2, firstDash + 1, len2);
-        memcpy(part3, secondDash + 1, len3);
-
-        if (!isDigitSequence(part1, len1) || !isDigitSequence(part2, len2) || !isDigitSequence(part3, len3)) {
+    bool isDigitSequence(const char* start, size_t length) {
+        if (start == nullptr || length == 0) {
             return false;
         }
 
-        int a = atoi(part1);
-        int b = atoi(part2);
-        int c = atoi(part3);
-
-        if (yearFirst) {
-            return isValidDate(c, b, a);
+        for (size_t i = 0; i < length; ++i) {
+            if (!(start[i] >= '0' && start[i] <= '9')) {
+                return false;
+            }
         }
 
-        return isValidDate(a, b, c);
+        return true;
     }
 
-    return false;
-}
+    bool isLeapYear(int year) {
+        return (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
+    }
 
+    bool isValidDate(int day, int month, int year) {
+        if (year < 1 || month < 1 || month > 12 || day < 1) {
+            return false;
+        }
+
+        const int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        int maxDay = daysInMonth[month - 1];
+        if (month == 2 && isLeapYear(year)) {
+            maxDay = 29;
+        }
+
+        return day <= maxDay;
+    }
+
+    bool isValidDateString(const char* s, bool yearFirst) {
+        if (s == nullptr || *s == '\0') {
+            return false;
+        }
+
+        const char* firstDash = strchr(s, '-');
+        if (firstDash == nullptr || firstDash == s) {
+            return false;
+        }
+
+        const char* secondDash = strchr(firstDash + 1, '-');
+        if (secondDash == nullptr || secondDash == firstDash + 1 || secondDash[1] == '\0') {
+            return false;
+        }
+
+        if (strchr(secondDash + 1, '-') != nullptr) {
+            return false;
+        }
+
+        size_t len1 = (size_t)(firstDash - s);
+        size_t len2 = (size_t)(secondDash - (firstDash + 1));
+        size_t len3 = strlen(secondDash + 1);
+
+        if ((len1 == 2 && len2 == 2 && len3 == 4) || (len1 == 4 && len2 == 2 && len3 == 2)) {
+            char part1[5] = {'\0'};
+            char part2[3] = {'\0'};
+            char part3[5] = {'\0'};
+
+            memcpy(part1, s, len1);
+            memcpy(part2, firstDash + 1, len2);
+            memcpy(part3, secondDash + 1, len3);
+
+            if (!isDigitSequence(part1, len1) || !isDigitSequence(part2, len2) || !isDigitSequence(part3, len3)) {
+                return false;
+            }
+
+            int a = atoi(part1);
+            int b = atoi(part2);
+            int c = atoi(part3);
+
+            if (yearFirst) {
+                return isValidDate(c, b, a);
+            }
+
+            return isValidDate(a, b, c);
+        }
+
+        return false;
+    }
 } // namespace
 
 bool isDigit(char c) {
@@ -317,7 +302,9 @@ bool isFormula(const char* s) {
 
     for (size_t i = 1; i < length; ++i) {
         char c = begin[i];
-        if (isDigit(c) || c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '!' || c == '<' || c == '>' || c == '.' || c == 'R' || c == 'r' || c == 'C' || c == 'c' || c == '(' || c == ')' || c == ' ' || c == '\t' || c == '\n' || c == '\r') {
+        if (isDigit(c) || c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '!' || c == '<' ||
+            c == '>' || c == '.' || c == 'R' || c == 'r' || c == 'C' || c == 'c' || c == '(' || c == ')' || c == ' ' ||
+            c == '\t' || c == '\n' || c == '\r') {
             continue;
         }
 

@@ -5,7 +5,7 @@
 #include <iosfwd>
 
 class Cell {
-public:
+  public:
     virtual ~Cell() {}
 
     virtual Type getType() const = 0;
@@ -21,7 +21,7 @@ public:
 };
 
 class EmptyCell : public Cell {
-public:
+  public:
     EmptyCell();
 
     Type getType() const override;
@@ -30,7 +30,7 @@ public:
 };
 
 class IntCell : public Cell {
-public:
+  public:
     explicit IntCell(long long value);
 
     Type getType() const override;
@@ -40,12 +40,12 @@ public:
 
     long long getValue() const;
 
-private:
+  private:
     long long value;
 };
 
 class DoubleCell : public Cell {
-public:
+  public:
     explicit DoubleCell(double value);
 
     Type getType() const override;
@@ -55,12 +55,12 @@ public:
 
     double getValue() const;
 
-private:
+  private:
     double value;
 };
 
 class StringCell : public Cell {
-public:
+  public:
     explicit StringCell(const char* value);
     ~StringCell() override;
 
@@ -68,12 +68,12 @@ public:
     void print(std::ostream& out) const override;
     const char* text() const override;
 
-private:
+  private:
     char* value;
 };
 
 class DateCell : public Cell {
-public:
+  public:
     explicit DateCell(const char* value);
     ~DateCell() override;
 
@@ -81,12 +81,12 @@ public:
     void print(std::ostream& out) const override;
     const char* text() const override;
 
-private:
+  private:
     char* value;
 };
 
 class FormulaCell : public Cell {
-public:
+  public:
     explicit FormulaCell(const char* expression);
     ~FormulaCell() override;
 
@@ -95,6 +95,6 @@ public:
     void print(std::ostream& out) const override;
     const char* text() const override;
 
-private:
+  private:
     char* expression;
 };

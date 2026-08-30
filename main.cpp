@@ -23,11 +23,21 @@ int main() {
     Cell* formulaCell = Cell::createFromText("=R1C1+10");
     Cell* emptyCell = Cell::createFromText("   ");
 
-    std::cout << static_cast<int>(intCell->getType()) << " "; intCell->print(std::cout); std::cout << "\n";
-    std::cout << static_cast<int>(doubleCell->getType()) << " "; doubleCell->print(std::cout); std::cout << "\n";
-    std::cout << static_cast<int>(stringCell->getType()) << " "; stringCell->print(std::cout); std::cout << "\n";
-    std::cout << static_cast<int>(dateCell->getType()) << " "; dateCell->print(std::cout); std::cout << "\n";
-    std::cout << static_cast<int>(formulaCell->getType()) << " "; formulaCell->print(std::cout); std::cout << "\n";
+    std::cout << static_cast<int>(intCell->getType()) << " ";
+    intCell->print(std::cout);
+    std::cout << "\n";
+    std::cout << static_cast<int>(doubleCell->getType()) << " ";
+    doubleCell->print(std::cout);
+    std::cout << "\n";
+    std::cout << static_cast<int>(stringCell->getType()) << " ";
+    stringCell->print(std::cout);
+    std::cout << "\n";
+    std::cout << static_cast<int>(dateCell->getType()) << " ";
+    dateCell->print(std::cout);
+    std::cout << "\n";
+    std::cout << static_cast<int>(formulaCell->getType()) << " ";
+    formulaCell->print(std::cout);
+    std::cout << "\n";
     std::cout << emptyCell->isEmpty() << "\n";
 
     delete intCell;

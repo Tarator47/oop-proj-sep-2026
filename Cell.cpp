@@ -2,54 +2,52 @@
 
 #include "TypeDetectors.h"
 
-#include <ctype.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ctype.h>
 #include <iostream>
 
 namespace {
+    char* cloneCString(const char* source) {
+        if (source == nullptr) {
+            return new char[1]{'\0'};
+        }
 
-char* cloneCString(const char* source) {
-    if (source == nullptr) {
-        return new char[1]{'\0'};
+        size_t length = strlen(source) + 1;
+        char* copy = new char[length];
+        strcpy(copy, source);
+        return copy;
     }
 
-    size_t length = strlen(source) + 1;
-    char* copy = new char[length];
-    strcpy(copy, source);
-    return copy;
-}
+    void trimInPlace(char* text) {
+        if (text == nullptr) {
+            return;
+        }
 
-void trimInPlace(char* text) {
-    if (text == nullptr) {
-        return;
+        size_t start = 0;
+        while (text[start] != '\0' && isspace((unsigned char)text[start])) {
+            ++start;
+        }
+
+        if (start > 0) {
+            size_t length = strlen(text + start) + 1;
+            memmove(text, text + start, length);
+        }
+
+        size_t end = strlen(text);
+        while (end > 0 && isspace((unsigned char)text[end - 1])) {
+            text[--end] = '\0';
+        }
     }
 
-    size_t start = 0;
-    while (text[start] != '\0' && isspace((unsigned char)text[start])) {
-        ++start;
+    char* trimClone(const char* source) {
+        char* copy = cloneCString(source == nullptr ? "" : source);
+        trimInPlace(copy);
+        char* result = cloneCString(copy);
+        delete[] copy;
+        return result;
     }
-
-    if (start > 0) {
-        size_t length = strlen(text + start) + 1;
-        memmove(text, text + start, length);
-    }
-
-    size_t end = strlen(text);
-    while (end > 0 && isspace((unsigned char)text[end - 1])) {
-        text[--end] = '\0';
-    }
-}
-
-char* trimClone(const char* source) {
-    char* copy = cloneCString(source == nullptr ? "" : source);
-    trimInPlace(copy);
-    char* result = cloneCString(copy);
-    delete[] copy;
-    return result;
-}
-
 } // namespace
 
 bool Cell::isEmpty() const {
@@ -80,27 +78,27 @@ Cell* Cell::createFromText(const char* rawText) {
     Cell* result = nullptr;
 
     switch (type) {
-        case Type::Empty:
-            result = new EmptyCell();
-            break;
-        case Type::Integer:
-            result = new IntCell(atoll(trimmed));
-            break;
-        case Type::Double:
-            result = new DoubleCell(atof(trimmed));
-            break;
-        case Type::String:
-            result = new StringCell(trimmed);
-            break;
-        case Type::Date:
-            result = new DateCell(trimmed);
-            break;
-        case Type::Formula:
-            result = new FormulaCell(trimmed);
-            break;
-        default:
-            result = new EmptyCell();
-            break;
+    case Type::Empty:
+        result = new EmptyCell();
+        break;
+    case Type::Integer:
+        result = new IntCell(atoll(trimmed));
+        break;
+    case Type::Double:
+        result = new DoubleCell(atof(trimmed));
+        break;
+    case Type::String:
+        result = new StringCell(trimmed);
+        break;
+    case Type::Date:
+        result = new DateCell(trimmed);
+        break;
+    case Type::Formula:
+        result = new FormulaCell(trimmed);
+        break;
+    default:
+        result = new EmptyCell();
+        break;
     }
 
     delete[] trimmed;
@@ -121,8 +119,7 @@ const char* EmptyCell::text() const {
     return "";
 }
 
-IntCell::IntCell(long long value)
-    : value(value) {}
+IntCell::IntCell(long long value) : value(value) {}
 
 Type IntCell::getType() const {
     return Type::Integer;
@@ -146,8 +143,7 @@ long long IntCell::getValue() const {
     return value;
 }
 
-DoubleCell::DoubleCell(double value)
-    : value(value) {}
+DoubleCell::DoubleCell(double value) : value(value) {}
 
 Type DoubleCell::getType() const {
     return Type::Double;
@@ -171,8 +167,7 @@ double DoubleCell::getValue() const {
     return value;
 }
 
-StringCell::StringCell(const char* value)
-    : value(cloneCString(value == nullptr ? "" : value)) {}
+StringCell::StringCell(const char* value) : value(cloneCString(value == nullptr ? "" : value)) {}
 
 StringCell::~StringCell() {
     delete[] value;
@@ -190,8 +185,7 @@ const char* StringCell::text() const {
     return value;
 }
 
-DateCell::DateCell(const char* value)
-    : value(cloneCString(value == nullptr ? "" : value)) {}
+DateCell::DateCell(const char* value) : value(cloneCString(value == nullptr ? "" : value)) {}
 
 DateCell::~DateCell() {
     delete[] value;
@@ -209,8 +203,7 @@ const char* DateCell::text() const {
     return value;
 }
 
-FormulaCell::FormulaCell(const char* expression)
-    : expression(cloneCString(expression == nullptr ? "" : expression)) {}
+FormulaCell::FormulaCell(const char* expression) : expression(cloneCString(expression == nullptr ? "" : expression)) {}
 
 FormulaCell::~FormulaCell() {
     delete[] expression;
