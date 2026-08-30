@@ -91,11 +91,20 @@ int main() {
 
     std::cout << "\nTable tests:\n";
     Table table;
-    table.addRow(parseRow("10, 20, 30", ','));
-    table.addRow(parseRow("\"Hello\", 42", ','));
+    table.addRow(new Row(parseRow("10, 20, 30", ',')));
+    table.addRow(new Row(parseRow("\"Hello\", 42", ',')));
+    table.setCell(5, 10, Cell::createFromText("99"));
     std::cout << table.getRowCount() << "\n";
     std::cout << table.getRow(0)->getCellCount() << "\n";
     std::cout << table.getRow(1)->getCell(0)->text() << "\n";
+    std::cout << table.getCell(5, 10)->text() << "\n";
+
+    table.saveToFile("table_test.csv", ',');
+
+    Table loaded;
+    loaded.loadFromFile("table_test.csv", ',');
+    std::cout << loaded.getRowCount() << "\n";
+    std::cout << loaded.getRow(5)->getCell(10)->text() << "\n";
 
     return 0;
 }

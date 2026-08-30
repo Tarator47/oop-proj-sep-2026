@@ -2,6 +2,7 @@
 
 #include "Row.h"
 
+#include <iosfwd>
 #include <stddef.h>
 
 class Table {
@@ -14,12 +15,22 @@ class Table {
     Table(Table&& other) noexcept;
     Table& operator=(Table&& other) noexcept;
 
-    void addRow(const Row& row);
-    void setRow(size_t index, const Row& row);
-    Row* getRow(size_t index);
-    const Row* getRow(size_t index) const;
     size_t getRowCount() const;
+    Row* getRow(size_t r);
+    const Row* getRow(size_t r) const;
+
+    void addRow(Row* row);
+    void insertRow(size_t index, Row* row);
+    void removeRow(size_t index);
     void clear();
+
+    bool loadFromFile(const char* filename, char delimiter = ',');
+    bool saveToFile(const char* filename, char delimiter = ',') const;
+    void print(std::ostream& out) const;
+
+    Cell* getCell(size_t r, size_t c);
+    const Cell* getCell(size_t r, size_t c) const;
+    bool setCell(size_t r, size_t c, Cell* cell);
 
   private:
     void copyFrom(const Table& other);
