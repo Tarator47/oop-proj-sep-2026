@@ -102,10 +102,13 @@ int main() {
     table.editCell(1, 1, "777");
     std::cout << table.getRow(1)->getCell(1)->text() << "\n";
 
-    table.saveToFile("table_test.csv", ',');
+    std::cout << "\nPrinted table:\n";
+    printTable(table, std::cout);
+
+    saveTable(table, "table_test.csv", ',');
 
     Table loaded;
-    loaded.loadFromFile("table_test.csv", ',');
+    loadTable(loaded, "table_test.csv", ',');
     std::cout << loaded.getRowCount() << "\n";
     std::cout << loaded.getRow(5)->getCell(10)->text() << "\n";
 

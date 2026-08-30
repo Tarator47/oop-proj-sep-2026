@@ -75,6 +75,8 @@ void Row::setCell(size_t index, Cell* cell) {
         return;
     }
 
+    size_t oldCount = count;
+
     if (index >= capacity) {
         size_t newCapacity = (capacity == 0) ? 4 : capacity * 2;
         while (newCapacity <= index) {
@@ -83,17 +85,17 @@ void Row::setCell(size_t index, Cell* cell) {
         resize(newCapacity);
     }
 
-    for (size_t i = count; i < index; ++i) {
+    for (size_t i = oldCount; i < index; ++i) {
         cells[i] = new EmptyCell();
     }
 
-    if (index < count) {
+    if (index < oldCount) {
         delete cells[index];
     }
 
     cells[index] = cell;
 
-    if (index >= count) {
+    if (index >= oldCount) {
         count = index + 1;
     }
 }

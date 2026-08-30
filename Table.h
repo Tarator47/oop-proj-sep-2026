@@ -33,6 +33,10 @@ class Table {
     bool setCell(size_t r, size_t c, Cell* cell);
     bool editCell(size_t r, size_t c, const char* text);
 
+    friend void printTable(const Table& table, std::ostream& out);
+    friend bool loadTable(Table& table, const char* filename, char delimiter);
+    friend bool saveTable(const Table& table, const char* filename, char delimiter);
+
   private:
     void copyFrom(const Table& other);
     void free();

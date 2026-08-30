@@ -6,6 +6,18 @@
 #include <iostream>
 #include <string>
 
+void printTable(const Table& table, std::ostream& out) {
+    table.print(out);
+}
+
+bool loadTable(Table& table, const char* filename, char delimiter) {
+    return table.loadFromFile(filename, delimiter);
+}
+
+bool saveTable(const Table& table, const char* filename, char delimiter) {
+    return table.saveToFile(filename, delimiter);
+}
+
 namespace {
     static char detectDelimiterFromFile(const char* filename) {
         std::ifstream input(filename);
