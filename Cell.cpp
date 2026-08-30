@@ -107,6 +107,10 @@ Cell* Cell::createFromText(const char* rawText) {
 
 EmptyCell::EmptyCell() {}
 
+EmptyCell::EmptyCell(const EmptyCell& other) {
+    (void)other;
+}
+
 Type EmptyCell::getType() const {
     return Type::Empty;
 }
@@ -119,7 +123,13 @@ const char* EmptyCell::text() const {
     return "";
 }
 
+Cell* EmptyCell::clone() const {
+    return new EmptyCell(*this);
+}
+
 IntCell::IntCell(long long value) : value(value) {}
+
+IntCell::IntCell(const IntCell& other) : value(other.value) {}
 
 Type IntCell::getType() const {
     return Type::Integer;
@@ -139,11 +149,17 @@ long long IntCell::asInteger() const {
     return value;
 }
 
+Cell* IntCell::clone() const {
+    return new IntCell(*this);
+}
+
 long long IntCell::getValue() const {
     return value;
 }
 
 DoubleCell::DoubleCell(double value) : value(value) {}
+
+DoubleCell::DoubleCell(const DoubleCell& other) : value(other.value) {}
 
 Type DoubleCell::getType() const {
     return Type::Double;
@@ -163,11 +179,17 @@ double DoubleCell::asDouble() const {
     return value;
 }
 
+Cell* DoubleCell::clone() const {
+    return new DoubleCell(*this);
+}
+
 double DoubleCell::getValue() const {
     return value;
 }
 
 StringCell::StringCell(const char* value) : value(cloneCString(value == nullptr ? "" : value)) {}
+
+StringCell::StringCell(const StringCell& other) : value(cloneCString(other.value == nullptr ? "" : other.value)) {}
 
 StringCell::~StringCell() {
     delete[] value;
@@ -185,7 +207,13 @@ const char* StringCell::text() const {
     return value;
 }
 
+Cell* StringCell::clone() const {
+    return new StringCell(*this);
+}
+
 DateCell::DateCell(const char* value) : value(cloneCString(value == nullptr ? "" : value)) {}
+
+DateCell::DateCell(const DateCell& other) : value(cloneCString(other.value == nullptr ? "" : other.value)) {}
 
 DateCell::~DateCell() {
     delete[] value;
@@ -203,7 +231,13 @@ const char* DateCell::text() const {
     return value;
 }
 
+Cell* DateCell::clone() const {
+    return new DateCell(*this);
+}
+
 FormulaCell::FormulaCell(const char* expression) : expression(cloneCString(expression == nullptr ? "" : expression)) {}
+
+FormulaCell::FormulaCell(const FormulaCell& other) : expression(cloneCString(other.expression == nullptr ? "" : other.expression)) {}
 
 FormulaCell::~FormulaCell() {
     delete[] expression;
@@ -223,4 +257,8 @@ void FormulaCell::print(std::ostream& out) const {
 
 const char* FormulaCell::text() const {
     return expression;
+}
+
+Cell* FormulaCell::clone() const {
+    return new FormulaCell(*this);
 }

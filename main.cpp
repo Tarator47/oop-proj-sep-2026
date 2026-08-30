@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Cell.h"
+#include "Row.h"
 #include "TypeDetectors.h"
 
 int main() {
@@ -46,6 +47,25 @@ int main() {
     delete dateCell;
     delete formulaCell;
     delete emptyCell;
+
+    std::cout << "\nRow tests:\n";
+    Row row;
+    row.addCell(Cell::createFromText("123"));
+    row.addCell(Cell::createFromText("\"Hello\""));
+    row.addCell(Cell::createFromText("2024-02-29"));
+
+    std::cout << row.getCellCount() << "\n";
+    std::cout << row.getCell(0)->text() << "\n";
+    std::cout << row.getCell(1)->text() << "\n";
+    std::cout << row.getCell(2)->text() << "\n";
+
+    Row copyRow(row);
+    std::cout << copyRow.getCellCount() << "\n";
+    std::cout << copyRow.getCell(1)->text() << "\n";
+
+    Row movedRow(std::move(row));
+    std::cout << movedRow.getCellCount() << "\n";
+    std::cout << movedRow.getCell(0)->text() << "\n";
 
     return 0;
 }
