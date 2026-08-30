@@ -1,8 +1,8 @@
 #include <cstring>
 #include <iostream>
 
-#include "Cell.h"
-#include "Table.h"
+#include "src/Cell.h"
+#include "src/Table.h"
 
 int main() {
     Table table;
