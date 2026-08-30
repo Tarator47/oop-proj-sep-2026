@@ -6,7 +6,7 @@
 #include "Table.h"
 #include "TypeDetectors.h"
 
-int main() {
+int tests() {
     std::cout << "Detector tests:\n";
     std::cout << isInteger("123") << " (1)\n";
     std::cout << isInteger("-123") << " (1)\n";
