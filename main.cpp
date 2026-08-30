@@ -66,6 +66,28 @@ int main() {
     Row movedRow(std::move(row));
     std::cout << movedRow.getCellCount() << "\n";
     std::cout << movedRow.getCell(0)->text() << "\n";
+    Row r;
+    r.addCell(new IntCell(42));
+    r.addCell(new StringCell("\"hello\""));
+    r.addCell(new DoubleCell(3.14));
+
+    std::cout << "count: " << r.getCellCount() << "\n";  // 3
+
+    const Cell* c = r.getCell(0);
+    if (c) {
+        std::cout << "cell 0: ";
+        c->print(std::cout);
+        std::cout << "\n";                                // 42
+    }
+
+    // копиране
+    Row copy = r;
+    std::cout << "copy count: " << copy.getCellCount() << "\n";  // 3
+
+    // преместване
+    Row moved = std::move(copy);
+    std::cout << "moved count: " << moved.getCellCount() << "\n"; // 3
+    std::cout << "copy after move: " << copy.getCellCount() << "\n"; // 0
 
     return 0;
 }
