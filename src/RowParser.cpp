@@ -19,7 +19,7 @@ namespace {
 
         buf[len++] = c;
     }
-} // namespace
+}
 
 Row parseRow(const char* line, char delimiter) {
     Row row;

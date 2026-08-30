@@ -74,7 +74,7 @@ namespace {
         result[out] = '\0';
         return result;
     }
-} // namespace
+}
 
 bool Cell::isEmpty() const {
     return getType() == Type::Empty;

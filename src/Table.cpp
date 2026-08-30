@@ -88,7 +88,7 @@ namespace {
 
         cell->print(out);
     }
-} // namespace
+}
 
 Table::Table()
     : rows(nullptr), count(0), capacity(0) {
