@@ -2,6 +2,8 @@
 
 #include "Cell.h"
 #include "Row.h"
+#include "RowParser.h"
+#include "Table.h"
 #include "TypeDetectors.h"
 
 int main() {
@@ -66,28 +68,34 @@ int main() {
     Row movedRow(std::move(row));
     std::cout << movedRow.getCellCount() << "\n";
     std::cout << movedRow.getCell(0)->text() << "\n";
-    Row r;
-    r.addCell(new IntCell(42));
-    r.addCell(new StringCell("\"hello\""));
-    r.addCell(new DoubleCell(3.14));
 
-    std::cout << "count: " << r.getCellCount() << "\n";  // 3
+    std::cout << "\nParser tests:\n";
+    Row parsed = parseRow("10, \"Hello, world!\", 123.56", ',');
+    std::cout << parsed.getCellCount() << "\n";
+    std::cout << parsed.getCell(0)->text() << "\n";
+    std::cout << parsed.getCell(1)->text() << "\n";
+    std::cout << parsed.getCell(2)->text() << "\n";
 
-    const Cell* c = r.getCell(0);
-    if (c) {
-        std::cout << "cell 0: ";
-        c->print(std::cout);
-        std::cout << "\n";                                // 42
+    Row parsedEmpty = parseRow("10,,1000,", ',');
+    std::cout << parsedEmpty.getCellCount() << "\n";
+    for (size_t i = 0; i < parsedEmpty.getCellCount(); ++i) {
+        std::cout << i << ": '";
+        parsedEmpty.getCell(i)->print(std::cout);
+        std::cout << "'\n";
     }
 
-    // копиране
-    Row copy = r;
-    std::cout << "copy count: " << copy.getCellCount() << "\n";  // 3
+    Row parsedEscaped = parseRow("\"C:\\\\temp\\\\\", \"\\\"Quoted\\\"\"", ',');
+    std::cout << parsedEscaped.getCellCount() << "\n";
+    std::cout << parsedEscaped.getCell(0)->text() << "\n";
+    std::cout << parsedEscaped.getCell(1)->text() << "\n";
 
-    // преместване
-    Row moved = std::move(copy);
-    std::cout << "moved count: " << moved.getCellCount() << "\n"; // 3
-    std::cout << "copy after move: " << copy.getCellCount() << "\n"; // 0
+    std::cout << "\nTable tests:\n";
+    Table table;
+    table.addRow(parseRow("10, 20, 30", ','));
+    table.addRow(parseRow("\"Hello\", 42", ','));
+    std::cout << table.getRowCount() << "\n";
+    std::cout << table.getRow(0)->getCellCount() << "\n";
+    std::cout << table.getRow(1)->getCell(0)->text() << "\n";
 
     return 0;
 }

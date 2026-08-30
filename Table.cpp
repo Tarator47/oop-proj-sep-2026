@@ -1,26 +1,24 @@
-#include "Row.h"
+#include "Table.h"
 
-#include <stddef.h>
-
-Row::Row()
-    : cells(nullptr), count(0), capacity(0) {
+Table::Table()
+    : rows(nullptr), count(0), capacity(0) {
 }
 
-Row::~Row() {
+Table::~Table() {
     free();
 }
 
-Row::Row(const Row& other)
-    : cells(nullptr), count(0), capacity(0) {
+Table::Table(const Table& other)
+    : rows(nullptr), count(0), capacity(0) {
     copyFrom(other);
 }
 
-Row& Row::operator=(const Row& other) {
+Table& Table::operator=(const Table& other) {
     if (this != &other) {
-        Row temp(other);
-        Cell** tmpCells = cells;
-        cells = temp.cells;
-        temp.cells = tmpCells;
+        Table temp(other);
+        Row** tmpRows = rows;
+        rows = temp.rows;
+        temp.rows = tmpRows;
 
         size_t tmpCount = count;
         count = temp.count;
@@ -34,21 +32,21 @@ Row& Row::operator=(const Row& other) {
     return *this;
 }
 
-Row::Row(Row&& other) noexcept
-    : cells(other.cells), count(other.count), capacity(other.capacity) {
-    other.cells = nullptr;
+Table::Table(Table&& other) noexcept
+    : rows(other.rows), count(other.count), capacity(other.capacity) {
+    other.rows = nullptr;
     other.count = 0;
     other.capacity = 0;
 }
 
-Row& Row::operator=(Row&& other) noexcept {
+Table& Table::operator=(Table&& other) noexcept {
     if (this != &other) {
         free();
-        cells = other.cells;
+        rows = other.rows;
         count = other.count;
         capacity = other.capacity;
 
-        other.cells = nullptr;
+        other.rows = nullptr;
         other.count = 0;
         other.capacity = 0;
     }
@@ -56,25 +54,17 @@ Row& Row::operator=(Row&& other) noexcept {
     return *this;
 }
 
-void Row::addCell(Cell* cell) {
-    if (cell == nullptr) {
-        return;
-    }
-
+void Table::addRow(const Row& row) {
     if (count >= capacity) {
         size_t newCapacity = (capacity == 0) ? 4 : capacity * 2;
         resize(newCapacity);
     }
 
-    cells[count] = cell;
+    rows[count] = new Row(row);
     ++count;
 }
 
-void Row::setCell(size_t index, Cell* cell) {
-    if (cell == nullptr) {
-        return;
-    }
-
+void Table::setRow(size_t index, const Row& row) {
     if (index >= capacity) {
         size_t newCapacity = (capacity == 0) ? 4 : capacity * 2;
         while (newCapacity <= index) {
@@ -83,89 +73,85 @@ void Row::setCell(size_t index, Cell* cell) {
         resize(newCapacity);
     }
 
-    for (size_t i = count; i < index; ++i) {
-        cells[i] = new EmptyCell();
-    }
-
     if (index < count) {
-        delete cells[index];
+        delete rows[index];
     }
 
-    cells[index] = cell;
+    rows[index] = new Row(row);
 
     if (index >= count) {
         count = index + 1;
     }
 }
 
-Cell* Row::getCell(size_t index) {
+Row* Table::getRow(size_t index) {
     if (index >= count) {
         return nullptr;
     }
 
-    return cells[index];
+    return rows[index];
 }
 
-const Cell* Row::getCell(size_t index) const {
+const Row* Table::getRow(size_t index) const {
     if (index >= count) {
         return nullptr;
     }
 
-    return cells[index];
+    return rows[index];
 }
 
-size_t Row::getCellCount() const {
+size_t Table::getRowCount() const {
     return count;
 }
 
-void Row::clear() {
+void Table::clear() {
     free();
 }
 
-void Row::copyFrom(const Row& other) {
+void Table::copyFrom(const Table& other) {
     if (this == &other) {
         return;
     }
 
     count = other.count;
     capacity = other.capacity;
-    cells = new Cell*[capacity == 0 ? 1 : capacity];
+    rows = new Row*[capacity == 0 ? 1 : capacity];
 
     for (size_t i = 0; i < capacity; ++i) {
-        cells[i] = nullptr;
+        rows[i] = nullptr;
     }
 
     for (size_t i = 0; i < count; ++i) {
-        cells[i] = other.cells[i]->clone();
+        rows[i] = new Row(*other.rows[i]);
     }
 }
 
-void Row::free() {
-    if (cells == nullptr) {
+void Table::free() {
+    if (rows == nullptr) {
         return;
     }
 
     for (size_t i = 0; i < count; ++i) {
-        delete cells[i];
+        delete rows[i];
     }
 
-    delete[] cells;
-    cells = nullptr;
+    delete[] rows;
+    rows = nullptr;
     count = 0;
     capacity = 0;
 }
 
-void Row::resize(size_t newCapacity) {
-    Cell** newCells = new Cell*[newCapacity];
+void Table::resize(size_t newCapacity) {
+    Row** newRows = new Row*[newCapacity];
     for (size_t i = 0; i < newCapacity; ++i) {
-        newCells[i] = nullptr;
+        newRows[i] = nullptr;
     }
 
     for (size_t i = 0; i < count; ++i) {
-        newCells[i] = cells[i];
+        newRows[i] = rows[i];
     }
 
-    delete[] cells;
-    cells = newCells;
+    delete[] rows;
+    rows = newRows;
     capacity = newCapacity;
 }

@@ -48,7 +48,33 @@ namespace {
         delete[] copy;
         return result;
     }
-}
+
+    char* unescapeQuotedString(const char* token) {
+        if (token == nullptr) {
+            return cloneCString("");
+        }
+
+        size_t len = strlen(token);
+        if (len < 2 || token[0] != '"' || token[len - 1] != '"') {
+            return cloneCString(token);
+        }
+
+        char* result = new char[len];
+        size_t out = 0;
+
+        for (size_t i = 1; i + 1 < len; ++i) {
+            if (token[i] == '\\' && i + 1 < len - 1) {
+                ++i;
+                result[out++] = token[i];
+            } else {
+                result[out++] = token[i];
+            }
+        }
+
+        result[out] = '\0';
+        return result;
+    }
+} // namespace
 
 bool Cell::isEmpty() const {
     return getType() == Type::Empty;
@@ -187,7 +213,18 @@ double DoubleCell::getValue() const {
     return value;
 }
 
-StringCell::StringCell(const char* value) : value(cloneCString(value == nullptr ? "" : value)) {}
+StringCell::StringCell(const char* value) {
+    char* raw = cloneCString(value == nullptr ? "" : value);
+    char* prepared = raw;
+
+    if (raw[0] == '"' && raw[strlen(raw) - 1] == '"') {
+        char* unescaped = unescapeQuotedString(raw);
+        delete[] raw;
+        prepared = unescaped;
+    }
+
+    this->value = prepared;
+}
 
 StringCell::StringCell(const StringCell& other) : value(cloneCString(other.value == nullptr ? "" : other.value)) {}
 
