@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "Cell.h"
-#include "Row.h"
-#include "RowParser.h"
-#include "Table.h"
-#include "TypeDetectors.h"
+#include "src/Cell.h"
+#include "src/Row.h"
+#include "src/RowParser.h"
+#include "src/Table.h"
+#include "src/TypeDetectors.h"
 
-int tests() {
+int main() {
     std::cout << "Detector tests:\n";
     std::cout << isInteger("123") << " (1)\n";
     std::cout << isInteger("-123") << " (1)\n";
