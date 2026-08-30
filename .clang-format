@@ -11,7 +11,7 @@ ContinuationIndentWidth: 4
 
 NamespaceIndentation: All
 
-ColumnLimit:     120
+ColumnLimit:     0
 
 AllowShortFunctionsOnASingleLine: Inline
 DerivePointerAlignment: false
