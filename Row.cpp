@@ -75,24 +75,27 @@ void Row::setCell(size_t index, Cell* cell) {
         return;
     }
 
-    if (index >= count) {
-        size_t oldCount = count;
-        if (count >= capacity) {
-            size_t newCapacity = (capacity == 0) ? 4 : capacity * 2;
-            while (newCapacity <= index) {
-                newCapacity *= 2;
-            }
-            resize(newCapacity);
+    if (index >= capacity) {
+        size_t newCapacity = (capacity == 0) ? 4 : capacity * 2;
+        while (newCapacity <= index) {
+            newCapacity *= 2;
         }
-
-        for (size_t i = oldCount; i < index; ++i) {
-            cells[i] = new EmptyCell();
-        }
-        count = index + 1;
+        resize(newCapacity);
     }
 
-    delete cells[index];
+    for (size_t i = count; i < index; ++i) {
+        cells[i] = new EmptyCell();
+    }
+
+    if (index < count) {
+        delete cells[index];
+    }
+
     cells[index] = cell;
+
+    if (index >= count) {
+        count = index + 1;
+    }
 }
 
 Cell* Row::getCell(size_t index) {
